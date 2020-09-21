@@ -106,7 +106,6 @@ export const Container = () => {
                 findCard={findCard}
                 opacity={opacity}
                 height={height}
-                zIndex={displayData.length - i}
                 transform={y.interpolate((y) => `translate3d(0,${y}px, 0)`)}
               />
             )

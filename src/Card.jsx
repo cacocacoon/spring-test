@@ -14,7 +14,6 @@ export const Card = ({
   findCard,
   opacity,
   height,
-  zIndex,
   transform
 }) => {
   const nodeRef = useRef();
@@ -59,7 +58,7 @@ export const Card = ({
   return (
     <animated.div
       ref={nodeRef}
-      style={{ ...style, opacity: isDragging ? 0 : opacity, height, zIndex, transform }}
+      style={{ ...style, opacity: isDragging ? 0 : opacity, height, transform }}
     >
       <div className="main-list-cell">
         <div
