@@ -1,13 +1,7 @@
 import React from "react";
-import { DragSource, DropTarget, useDrag, useDrop } from "react-dnd";
+import { DragSource, DropTarget } from "react-dnd";
 import { ItemTypes } from "./ItemTypes";
 import { animated } from "react-spring/renderprops";
-// const style = {
-//   cursor: "move",
-//   position: "absolute",
-//   willChange: "transform, height, opacity",
-//   width: "100%"
-// };
 
 class DraggableCard extends React.Component {
   nodeRef = React.createRef()
@@ -21,18 +15,15 @@ class DraggableCard extends React.Component {
   render() {
     const { data, opacity, height, transform, isDragging } = this.props;
     const style = {
-      cursor: "move",
-      position: "absolute",
-      willChange: "transform, height, opacity",
-      width: "100%"
+      opacity: isDragging ? 0 : opacity,
+      height,
+      transform
     };
 
     return (
-      <animated.div ref={this.setRef} style={{ ...style, opacity: isDragging ? 0 : opacity, height, transform }}>
-        <div className="main-list-cell">
-          <div className="main-list-details" style={{ backgroundImage: data.css }}>
-            <h1>{data.text}</h1>
-          </div>
+      <animated.div className="main-list-cell" ref={this.setRef} style={style}>
+        <div className="main-list-details" style={{ backgroundImage: data.css }}>
+          <h1>{data.text}</h1>
         </div>
       </animated.div>
     );
