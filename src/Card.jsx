@@ -1,5 +1,6 @@
 import React from "react";
 import { DragSource, DropTarget } from "react-dnd";
+import { getEmptyImage } from 'react-dnd-html5-backend'
 import { ItemTypes } from "./ItemTypes";
 import { animated } from "react-spring/renderprops";
 
@@ -7,15 +8,18 @@ class DraggableCard extends React.Component {
   nodeRef = React.createRef()
 
   setRef = node => {
-    const { connectDragSource, connectDropTarget } = this.props;
+    const { connectDragSource, connectDropTarget, connectDragPreview } = this.props;
     this.nodeRef.current = node;
     connectDragSource(connectDropTarget(this.nodeRef));
+    connectDragPreview(getEmptyImage());
   }
 
   render() {
-    const { data, opacity, height, transform, isDragging } = this.props;
+    const { data, opacity, height, y } = this.props;
+    const transform = y.interpolate(y => `translate3d(0,${y}px, 0)`);
+
     const style = {
-      opacity: isDragging ? 0 : opacity,
+      opacity,
       height,
       transform
     };
@@ -41,9 +45,9 @@ export default DragSource(
         originalIndex: findCard(data.id).index,
       };
     }
-  }, (connect, monitor) => ({
-    isDragging: monitor.isDragging(),
+  }, connect => ({
     connectDragSource: connect.dragSource(),
+    connectDragPreview: connect.dragPreview(),
   }),
 )(
   DropTarget(

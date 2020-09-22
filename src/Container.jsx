@@ -79,7 +79,7 @@ class DroppableList extends React.Component {
                 findCard={this.findCard}
                 opacity={opacity}
                 height={height}
-                transform={y.interpolate(y => `translate3d(0,${y}px, 0)`)}
+                y={y}
               />
             )
           }}
