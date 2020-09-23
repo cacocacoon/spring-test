@@ -17,6 +17,7 @@ function collect(connect) {
 class DroppableList extends React.Component {
   state = {
     cards: items,
+    onDraggingCardIndex: undefined,
   }
 
   moveCard = (id, atIndex) => {
@@ -28,8 +29,17 @@ class DroppableList extends React.Component {
       const newCards = cards.filter(card => card !== undefined);
       newCards.splice(atIndex, 0, moveCard);
 
-      return { cards: newCards };
+      return { cards: newCards, onDraggingCardIndex: atIndex };
     });
+  }
+
+  handleStartMovingCard = id => {
+    const { index } = this.findCard(id);
+    this.setState({ onDraggingCardIndex: index });
+  }
+
+  handleDidMoveCard = () => {
+    this.setState({ onDraggingCardIndex: undefined });
   }
 
   findCard = id => {
@@ -44,15 +54,16 @@ class DroppableList extends React.Component {
 
   render() {
     const { connectDropTarget } = this.props;
-    const { cards } = this.state;
+    const { cards, onDraggingCardIndex } = this.state;
 
     let totalHeight = 0;
-    const displayData = cards.map((card) => {
-      let y = totalHeight;
+    const displayData = cards.map((card, index) => {
+      const scale = index === onDraggingCardIndex ? 1.2 : 1;
+      const y = totalHeight;
       const height = card.height;
       totalHeight += card.height;
   
-      return { y, height, cardData: card };
+      return { y, height, cardData: card, transform: [y, scale] };
     });
 
     return connectDropTarget(
@@ -62,14 +73,14 @@ class DroppableList extends React.Component {
           items={displayData}
           keys={({ cardData }) => cardData.id}
           initial={null}
-          from={{ height: 0, opacity: 0, scale: 1 }}
+          from={{ height: 0, opacity: 0 }}
           leave={{ height: 0, opacity: 0 }}
-          enter={({ y, height }) => ({ y, height, opacity: 1 })}
-          update={({ y, height }) => ({ y, height, scale: 1 })}
+          enter={({ height, transform }) => ({ transform, height, opacity: 1 })}
+          update={({ height, transform }) => ({ height, transform })}
         >
           {item => props => {
             const { cardData } = item;
-            const { opacity, y, height } = props;
+            const { opacity, height, transform } = props;
 
             return (
               <DraggableCard
@@ -77,9 +88,11 @@ class DroppableList extends React.Component {
                 data={cardData}
                 moveCard={this.moveCard}
                 findCard={this.findCard}
+                didMoveCard={this.handleDidMoveCard}
+                startMovingCard={this.handleStartMovingCard}
                 opacity={opacity}
                 height={height}
-                y={y}
+                transform={transform.interpolate((height, scale) => `translate3d(0,${height}px, 0) scale(${scale})`)}
               />
             )
           }}

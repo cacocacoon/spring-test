@@ -15,13 +15,18 @@ class DraggableCard extends React.Component {
   }
 
   render() {
-    const { data, opacity, height, y } = this.props;
-    const transform = y.interpolate(y => `translate3d(0,${y}px, 0)`);
+    const { data, opacity, height, transform, isDragging } = this.props;
+    let zIndex;
+
+    if (isDragging) {
+      zIndex = 1;
+    }
 
     const style = {
       opacity,
       height,
-      transform
+      transform,
+      zIndex,
     };
 
     return (
@@ -37,17 +42,24 @@ class DraggableCard extends React.Component {
 export default DragSource(
   ItemTypes.CARD, {
     beginDrag(props) {
-      const { data, findCard } = props;
+      const { data, findCard, startMovingCard } = props;
+      const originalIndex = findCard(data.id).index;
+      startMovingCard(data.id);
 
       return {
         type: ItemTypes.CARD,
         id: data.id,
-        originalIndex: findCard(data.id).index,
+        originalIndex,
       };
+    },
+    endDrag(props) {
+      const { didMoveCard } = props;
+      didMoveCard();
     }
-  }, connect => ({
+  }, (connect, monitor) => ({
     connectDragSource: connect.dragSource(),
     connectDragPreview: connect.dragPreview(),
+    isDragging: monitor.isDragging(),
   }),
 )(
   DropTarget(
