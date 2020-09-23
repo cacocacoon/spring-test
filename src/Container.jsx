@@ -50,10 +50,14 @@ class DroppableList extends React.Component {
       card,
       index: cards.indexOf(card)
     };
-  };
+  }
+
+  setRef = node => {
+    const { connectDropTarget } = this.props;
+    connectDropTarget(node);
+  }
 
   render() {
-    const { connectDropTarget } = this.props;
     const { cards, onDraggingCardIndex } = this.state;
 
     let totalHeight = 0;
@@ -66,21 +70,18 @@ class DroppableList extends React.Component {
       return { y, height, cardData: card, transform: [y, scale] };
     });
 
-    return connectDropTarget(
-      <div className="main-list">
+    return (
+      <div className="main-list" ref={this.setRef}>
         <Transition
           native
           items={displayData}
           keys={({ cardData }) => cardData.id}
           initial={null}
-          from={{ height: 0, opacity: 0 }}
-          leave={{ height: 0, opacity: 0 }}
-          enter={({ height, transform }) => ({ transform, height, opacity: 1 })}
           update={({ height, transform }) => ({ height, transform })}
         >
           {item => props => {
             const { cardData } = item;
-            const { opacity, height, transform } = props;
+            const { height, transform } = props;
 
             return (
               <DraggableCard
@@ -90,9 +91,8 @@ class DroppableList extends React.Component {
                 findCard={this.findCard}
                 didMoveCard={this.handleDidMoveCard}
                 startMovingCard={this.handleStartMovingCard}
-                opacity={opacity}
                 height={height}
-                transform={transform.interpolate((height, scale) => `translate3d(0,${height}px, 0) scale(${scale})`)}
+                transform={transform}
               />
             )
           }}

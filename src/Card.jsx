@@ -15,7 +15,7 @@ class DraggableCard extends React.Component {
   }
 
   render() {
-    const { data, opacity, height, transform, isDragging } = this.props;
+    const { data, height, transform, isDragging } = this.props;
     let zIndex;
 
     if (isDragging) {
@@ -23,9 +23,8 @@ class DraggableCard extends React.Component {
     }
 
     const style = {
-      opacity,
       height,
-      transform,
+      transform: transform.interpolate((y, scale) => `translate3d(0,${y}px, 0) scale(${scale})`),
       zIndex,
     };
 
@@ -64,7 +63,6 @@ export default DragSource(
 )(
   DropTarget(
     ItemTypes.CARD, {
-      canDrop: () => false,
       hover(props, monitor, component) {
         const { findCard, moveCard, data } = props;
         const item = monitor.getItem();
@@ -89,7 +87,6 @@ export default DragSource(
         }
 
         moveCard(item.id, hoverIndex);
-        monitor.getItem().originalIndex = hoverIndex;
       }
   }, connect => ({
     connectDropTarget: connect.dropTarget(),
