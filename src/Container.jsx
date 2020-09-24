@@ -62,7 +62,7 @@ class DroppableList extends React.Component {
 
     let totalHeight = 0;
     const displayData = cards.map((card, index) => {
-      const scale = index === onDraggingCardIndex ? 1.2 : 1;
+      const scale = index === onDraggingCardIndex ? 1.05 : 1;
       const y = totalHeight;
       const height = card.height;
       totalHeight += card.height;
