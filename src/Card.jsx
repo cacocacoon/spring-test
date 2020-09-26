@@ -72,17 +72,18 @@ export default DragSource(
         if (dragIndex === hoverIndex) {
           return;
         }
+
         const { nodeRef } = component;
         const hoverBoundingRect = nodeRef.current?.getBoundingClientRect();
-        const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+        const hoverY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 5;
         const clientOffset = monitor.getClientOffset();
         const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
-        if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        if (dragIndex < hoverIndex && hoverClientY < hoverY) {
           return;
         }
 
-        if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        if (dragIndex > hoverIndex && hoverClientY > hoverY * 4) {
           return;
         }
 
